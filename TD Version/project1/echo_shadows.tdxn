@@ -1,0 +1,2335 @@
+format: tdxn
+version: '2.1'
+build: 8
+generator: Embody/6.2.69
+td_build: 099.2025.33230
+network_path: /project1/echo_shadows
+options:
+  include_dat_content: false
+  include_storage: true
+type_defaults:
+  boxSOP:
+    flags:
+    - display
+    - render
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  circlePOP:
+    parameters:
+      connectivity: surface
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  connectivityPOP:
+    parameters:
+      surftype: lines
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  constantMAT:
+    parameters:
+      skelrootpath: =parent()
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  copyPOP:
+    parameters:
+      ncy: 2
+      rx: 90
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  geometryCOMP:
+    size: [160, 130]
+    color: [0.67, 0.67, 0.67]
+  lightCOMP:
+    parameters:
+      aperture: 41.4214
+      coneangle: 72
+      conedelta: 22
+      coneroll: 1.4
+      lighttype: cone
+      maxshadowsoftness: 0.03
+      projangle: 90
+      projmapextendu: hold
+      projmapextendv: hold
+      shadowcasters: =' '.join(o.path for o in parent.Vis.ops('geo_person*', 'geo_prop_*') if o.par.render.eval())
+      shadowtype: soft2d
+    size: [160, 130]
+    color: [0.67, 0.67, 0.67]
+  linePOP:
+    parameters:
+      bypass: =not parent().par.attenuated
+      divs: 1
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  mergePOP:
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  mergeSOP:
+    flags:
+    - display
+    - render
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  phongMAT:
+    parameters:
+      ambb: 0.7
+      ambg: 0.7
+      ambr: 0.7
+      darknessemitcolorr: 0.7
+      skelrootpath: =parent()
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  pointgeneratorPOP:
+    parameters:
+      numpoints: 17
+      shape: circle
+      sx: 0.2
+      sy: 0.2
+      sz: 0.2
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  primitivePOP:
+    parameters:
+      addpts: true
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  rectanglePOP:
+    parameters:
+      anchorv: 0
+      sizeu: 0.02
+      sizev: 0.5
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  scriptCHOP:
+    parameters:
+      autoexportroot: =parent()
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  spherePOP:
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  sphereSOP:
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  switchPOP:
+    parameters:
+      index: =parent().par.lighttype.menuIndex
+    flags:
+    - display
+    - render
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  textDAT:
+    parameters:
+      syncfile: true
+    size: [130, 90]
+    color: [0.9, 0.3, 0.4]
+  textTOP:
+    parameters:
+      aligny: top
+      font: Menlo
+      fontsizexunit: pixels
+      outputresolution: custom
+      resolutionh: 720
+      resolutionw: 1280
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  transformPOP:
+    parameters:
+      tz: 0.8
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  transformTOP:
+    parameters:
+      fillmode: fill
+      outputresolution: custom
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  tubePOP:
+    parameters:
+      orient: z
+      rows: 2
+    flags:
+    - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  tubeSOP:
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+par_templates:
+  points:
+  - label: Point
+    name: pt
+    style: Sequence
+  - label: Position
+    name: Posx
+    sequence: pt
+    size: 3
+    style: XYZW
+type: baseCOMP
+custom_pars:
+  Control:
+  - name: Soundmode
+    style: Toggle
+    label: Sound Mode
+    startSection: true
+    default: true
+    help: Sound-reactive mode (TouchOSC /soundMode). Only runs while Demo Mode is off.
+  - name: Demomode
+    style: Toggle
+    label: Demo Mode
+    help: 'Demo mode (TouchOSC /demoMode): light single units by hand with the Unit toggles and RGB faders.'
+  - name: Unit1
+    style: Toggle
+    label: Unit 1 (Red)
+    startSection: true
+    help: 'Demo mode: all 5 LEDs of unit 1 red at the Red fader level (/unit1).'
+  - name: Unit2
+    style: Toggle
+    label: Unit 2 (Green)
+    help: 'Demo mode: all 5 LEDs of unit 2 green at the Green fader level (/unit2).'
+  - name: Unit3
+    style: Toggle
+    label: Unit 3 (Blue)
+    help: 'Demo mode: all 5 LEDs of unit 3 blue at the Blue fader level (/unit3).'
+  - name: Unit4
+    style: Toggle
+    label: Unit 4 (Mixed)
+    help: 'Demo mode: unit 4 shows the fixed 5-colour test pattern (/unit4).'
+  - name: Red
+    style: Float
+    startSection: true
+    clampMin: true
+    clampMax: true
+    help: Demo level for unit 1 red, 0-1 (TouchOSC /red).
+  - name: Green
+    style: Float
+    clampMin: true
+    clampMax: true
+    help: Demo level for unit 2 green, 0-1 (TouchOSC /green).
+  - name: Blue
+    style: Float
+    clampMin: true
+    clampMax: true
+    help: Demo level for unit 3 blue, 0-1 (TouchOSC /blue).
+  - name: Booster
+    style: Menu
+    startSection: true
+    default: default
+    menuNames:
+    - default
+    - norbooster
+    - boosterplus
+    - boosterplus2
+    menuLabels:
+    - Default
+    - NORBOOSTER
+    - BOOSTER+
+    - BOOSTER++
+    help: 'Audio gain preset from the 2024 sketch: Default, NORBOOSTER, BOOSTER+, BOOSTER++. Higher = more reactive to quiet input.'
+  - name: Reset
+    style: Pulse
+    label: Reset Controls
+    startSection: true
+    help: Set every control back to 0 here and on TouchOSC (same as the TouchOSC reset button).
+  Audio:
+  - name: Audiosource
+    style: Menu
+    label: Audio Source
+    default: linein
+    menuNames:
+    - linein
+    - file
+    menuLabels:
+    - Line In
+    - Test File
+    help: Line In = the audio interface, as in the installation. Test File = play Audiofile so the patterns can be previewed without live music.
+    value: file
+  - name: Audiofile
+    style: File
+    label: Test Audio File
+    default: /Applications/TouchDesigner.app/Contents/Resources/tfs/Samples/Audio/JeremyCaulfield_www.dumb-unit.com.mp3
+    help: Music file used when Audio Source is Test File.
+  - name: Inputgain
+    style: Float
+    label: Input Gain
+    default: 1
+    clampMin: true
+    normMax: 4.0
+    help: Multiplies the FFT band values before the booster gains. Recalibrate here if a new audio interface is louder or quieter than the 2024 setup.
+  - name: Monitor
+    style: Toggle
+    label: Monitor Test File
+    default: true
+    help: Play the test file through the computer speakers.
+  Engine:
+  - name: Legacydemo
+    style: Toggle
+    label: Legacy Demo Override
+    default: true
+    help: 'On = exactly like the 2024 sketch: in sound mode unit1 red, unit2 green, unit3 blue and 7 unit4 channels are always forced to 0 (side effect of the demo blocks). Off = every pattern shows all its colours.'
+  - name: Resetengine
+    style: Pulse
+    label: Reset Engine
+    help: 'Restart the engine: pattern timer, fades and DMX targets.'
+  - name: Dmxactive
+    style: Toggle
+    label: DMX Output Active
+    startSection: true
+    help: Send DMX through the ENTTEC DMX USB Pro. Leave off until the interface is plugged in.
+  Visualizer:
+  - name: Openpreview
+    style: Pulse
+    label: Open Preview Window
+    help: Open the visualizer output (visualizer/out1) in a floating window.
+  - name: Visgain
+    style: Float
+    label: Beam Brightness
+    default: 1.6
+    clampMin: true
+    normMax: 4.0
+    help: 'Visualizer only: brightness of the simulated beams (does not change the DMX output).'
+  - name: Personmove
+    style: Toggle
+    label: Moving Visitor
+    default: true
+    help: 'Visualizer only: the visitor figure sways slowly in front of the wall so the shadows move.'
+  - name: Visitor2
+    style: Toggle
+    label: Second Visitor
+    startSection: true
+    default: true
+    help: 'Visualizer only: a second visitor with raised arms, standing further back on the left.'
+  - name: Proplattice
+    style: Toggle
+    label: 'Prop: Hanging Lattice'
+    default: true
+    help: 'Visualizer only: a perforated panel hanging from a string, slowly turning.'
+  - name: Propbranch
+    style: Toggle
+    label: 'Prop: Branch'
+    default: true
+    help: 'Visualizer only: a branch in a pot on the left side.'
+  - name: Smoke
+    style: Toggle
+    startSection: true
+    default: true
+    help: 'Visualizer only: the first visitor exhales a puff of smoke every few seconds; it glows in the beams and throws soft coloured shadows.'
+  - name: Smokeperiod
+    style: Float
+    label: Smoke Puff Every (s)
+    default: 6
+    min: 0.5
+    clampMin: true
+    normMin: 2.0
+    normMax: 15.0
+    help: 'Visualizer only: seconds between two exhaled puffs.'
+  - name: Smokedensity
+    style: Float
+    label: Smoke Density
+    default: 3
+    clampMin: true
+    normMax: 4.0
+    help: 'Visualizer only: thickness of the smoke, for the visible puff and its shadow.'
+parameters:
+  parentshortcut: Echo
+color: [0.3, 0.5, 0.9]
+tags:
+- tdxn
+comment: 'Echo Shadows: audio -> engine -> DMX (4 units x 20ch) + visualizer'
+operators:
+- name: engine
+  type: scriptCHOP
+  parameters:
+    callbacks: engine_callbacks
+  position: [1400, 200]
+  inputs:
+  - switch_audio
+- name: dmxout1
+  type: dmxoutCHOP
+  parameters:
+    active: =parent.Echo.par.Dmxactive
+    interface: enttecusbpro
+    rate: =me.time.rate
+    routingtable: dmxout1_routingtable
+    autoexportroot: =parent()
+  position: [3000, 200]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  inputs:
+  - select_dmx
+- name: select_dmx
+  type: selectCHOP
+  parameters:
+    channames: dmx*
+    autoexportroot: =parent()
+  position: [2600, 200]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  inputs:
+  - null_engine
+- name: visualizer
+  type: containerCOMP
+  parameters:
+    w: 1280
+    h: 720
+    resizecomp: =me
+    repocomp: =me
+    top: =me.op('out1')
+    topfill: best
+    parentshortcut: Vis
+    parmreferencewhite: default
+  position: [1400, -800]
+  size: [160, 130]
+  color: [0.67, 0.67, 0.67]
+  comment: 3D preview of the 4 fixtures, beams and coloured shadows
+  children:
+  - name: cam1
+    type: cameraCOMP
+    parameters:
+      tx: 1.4
+      ty: 2.5
+      tz: 8.6
+      rx: -9.59009
+      ry: 8.97263
+      fov: 52
+      aperture: 41.4214
+    position: [2200, -600]
+    size: [160, 130]
+    color: [0.67, 0.67, 0.67]
+    children:
+    - name: file1
+      type: fileinPOP
+      parameters:
+        file: =app.samplesFolder + '/Geo/defcam.tog'
+      flags:
+      - display
+      - viewer
+      size: [130, 90]
+      color: [0.67, 0.67, 0.67]
+  - name: out1
+    type: outTOP
+    parameters:
+      label: =me.name
+    flags:
+    - display
+    position: [4200, 0]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+    inputs:
+    - comp_over
+  - name: gobo1
+    type: transformTOP
+    parameters:
+      tx: =parent.Vis.op('smoke_proj')['cu'][0] - 0.5
+      ty: =parent.Vis.op('smoke_proj')['cv'][0] - 0.5
+      sx: =parent.Vis.op('smoke_proj')['su'][0]
+      sy: =parent.Vis.op('smoke_proj')['sv'][0]
+      bgcolorr: 1
+      bgcolorg: 1
+      bgcolorb: 1
+      bgcolora: 1
+      extend: hold
+      resolutionw: 512
+      resolutionh: 512
+    position: [400, -1000]
+    inputs:
+    - smoke_atten
+  - name: gobo2
+    type: transformTOP
+    parameters:
+      tx: =parent.Vis.op('smoke_proj')['cu'][1] - 0.5
+      ty: =parent.Vis.op('smoke_proj')['cv'][1] - 0.5
+      sx: =parent.Vis.op('smoke_proj')['su'][1]
+      sy: =parent.Vis.op('smoke_proj')['sv'][1]
+      bgcolorr: 1
+      bgcolorg: 1
+      bgcolorb: 1
+      bgcolora: 1
+      extend: hold
+      resolutionw: 512
+      resolutionh: 512
+    position: [400, -1200]
+    inputs:
+    - smoke_atten
+  - name: gobo3
+    type: transformTOP
+    parameters:
+      tx: =parent.Vis.op('smoke_proj')['cu'][2] - 0.5
+      ty: =parent.Vis.op('smoke_proj')['cv'][2] - 0.5
+      sx: =parent.Vis.op('smoke_proj')['su'][2]
+      sy: =parent.Vis.op('smoke_proj')['sv'][2]
+      bgcolorr: 1
+      bgcolorg: 1
+      bgcolorb: 1
+      bgcolora: 1
+      extend: hold
+      resolutionw: 512
+      resolutionh: 512
+    position: [400, -1400]
+    inputs:
+    - smoke_atten
+  - name: gobo4
+    type: transformTOP
+    parameters:
+      tx: =parent.Vis.op('smoke_proj')['cu'][3] - 0.5
+      ty: =parent.Vis.op('smoke_proj')['cv'][3] - 0.5
+      sx: =parent.Vis.op('smoke_proj')['su'][3]
+      sy: =parent.Vis.op('smoke_proj')['sv'][3]
+      bgcolorr: 1
+      bgcolorg: 1
+      bgcolorb: 1
+      bgcolora: 1
+      extend: hold
+      resolutionw: 512
+      resolutionh: 512
+    position: [400, -1600]
+    inputs:
+    - smoke_atten
+  - name: light1
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('fixture_data')['tx'][0]
+      ty: =parent.Vis.op('fixture_data')['ty'][0]
+      tz: =parent.Vis.op('fixture_data')['tz'][0]
+      rx: =parent.Vis.op('fixture_data')['rx'][0]
+      ry: =parent.Vis.op('fixture_data')['ry'][0]
+      cr: =parent.Vis.op('fixture_data')['r'][0]
+      cg: =parent.Vis.op('fixture_data')['g'][0]
+      cb: =parent.Vis.op('fixture_data')['b'][0]
+      projmap: =parent.Vis.op('gobo1')
+    position: [2200, 400]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light2
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('fixture_data')['tx'][1]
+      ty: =parent.Vis.op('fixture_data')['ty'][1]
+      tz: =parent.Vis.op('fixture_data')['tz'][1]
+      rx: =parent.Vis.op('fixture_data')['rx'][1]
+      ry: =parent.Vis.op('fixture_data')['ry'][1]
+      cr: =parent.Vis.op('fixture_data')['r'][1]
+      cg: =parent.Vis.op('fixture_data')['g'][1]
+      cb: =parent.Vis.op('fixture_data')['b'][1]
+      projmap: =parent.Vis.op('gobo2')
+    position: [2200, 200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light3
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('fixture_data')['tx'][2]
+      ty: =parent.Vis.op('fixture_data')['ty'][2]
+      tz: =parent.Vis.op('fixture_data')['tz'][2]
+      rx: =parent.Vis.op('fixture_data')['rx'][2]
+      ry: =parent.Vis.op('fixture_data')['ry'][2]
+      cr: =parent.Vis.op('fixture_data')['r'][2]
+      cg: =parent.Vis.op('fixture_data')['g'][2]
+      cb: =parent.Vis.op('fixture_data')['b'][2]
+      projmap: =parent.Vis.op('gobo3')
+    position: [2200, 0]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light4
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('fixture_data')['tx'][3]
+      ty: =parent.Vis.op('fixture_data')['ty'][3]
+      tz: =parent.Vis.op('fixture_data')['tz'][3]
+      rx: =parent.Vis.op('fixture_data')['rx'][3]
+      ry: =parent.Vis.op('fixture_data')['ry'][3]
+      cr: =parent.Vis.op('fixture_data')['r'][3]
+      cg: =parent.Vis.op('fixture_data')['g'][3]
+      cb: =parent.Vis.op('fixture_data')['b'][3]
+      projmap: =parent.Vis.op('gobo4')
+    position: [2200, -200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: mat_led
+    type: constantMAT
+    position: [1200, -400]
+  - name: render1
+    type: renderTOP
+    parameters:
+      geometry: geo_wall geo_floor geo_person geo_person2 geo_prop_lattice geo_prop_branch geo_housing geo_leds geo_smoke
+      lights: light* ambient1
+      antialias: aa8
+    position: [3000, 0]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  - name: ambient1
+    type: ambientlightCOMP
+    parameters:
+      dimmer: 0.06
+      aperture: 41.4214
+    position: [2200, -400]
+    size: [160, 130]
+    color: [0.67, 0.67, 0.67]
+    children:
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.2
+        rady: 0.2
+        radz: 0.2
+      flags:
+      - display
+      - viewer
+  - name: geo_leds
+    type: geometryCOMP
+    parameters:
+      instancing: true
+      instanceop: =parent.Vis.op('led_data')
+      instancetx: tx
+      instancety: ty
+      instancetz: tz
+      instancerx: rx
+      instancery: ry
+      instancer: r
+      instanceg: g
+      instanceb: b
+      material: =parent.Vis.op('mat_led')
+    position: [1400, -400]
+    children:
+    - name: bulb
+      type: sphereSOP
+      parameters:
+        radx: 0.03
+        rady: 0.03
+        radz: 0.03
+        rows: 10
+        cols: 16
+      flags:
+      - display
+      - render
+  - name: geo_wall
+    type: geometryCOMP
+    parameters:
+      material: =parent.Vis.op('mat_wall')
+    position: [1400, 400]
+    children:
+    - name: wall
+      type: boxSOP
+      parameters:
+        sizex: 7
+        sizey: 3.6
+        sizez: 0.1
+        ty: 1.8
+        tz: -0.05
+  - name: led_data
+    type: scriptCHOP
+    parameters:
+      callbacks: led_data_callbacks
+    position: [400, 0]
+    inputs:
+    - fixture_data
+  - name: led_grid
+    type: scriptTOP
+    parameters:
+      callbacks: led_grid_callbacks
+    position: [3000, -400]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  - name: mat_prop
+    type: phongMAT
+    parameters:
+      diffr: 0.55
+      diffg: 0.52
+      diffb: 0.48
+      specr: 0.1
+      specg: 0.1
+      specb: 0.1
+      shininess: 20
+      cullface: neither
+    sequences:
+      rimlight:
+      - colorr: 0.7
+        colorg: 0.7
+        colorb: 0.7
+    position: [1200, -800]
+  - name: mat_wall
+    type: phongMAT
+    parameters:
+      diffr: 0.82
+      diffg: 0.8
+      diffb: 0.77
+      specr: 0.03
+      specg: 0.03
+      specb: 0.03
+    sequences:
+      rimlight:
+      - colorr: 0.7
+        colorg: 0.7
+        colorb: 0.7
+    position: [1200, 400]
+  - name: comp_over
+    type: compositeTOP
+    parameters:
+      operand: over
+    position: [3800, 0]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+    inputs:
+    - text_status
+    - text_labels
+    - panel_xform
+    - render1
+  - name: geo_floor
+    type: geometryCOMP
+    parameters:
+      material: =parent.Vis.op('mat_floor')
+    position: [1400, 200]
+    children:
+    - name: floor
+      type: boxSOP
+      parameters:
+        sizex: 7
+        sizey: 0.04
+        sizez: 5.5
+        ty: -0.02
+        tz: 2.4
+  - name: geo_smoke
+    type: geometryCOMP
+    parameters:
+      tx: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[0]
+      ty: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[1]
+      tz: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[2]
+      material: =parent.Vis.op('mat_smoke')
+      render: =parent.Echo.par.Smoke
+    position: [1400, -1200]
+    children:
+    - name: sheet
+      type: rectangleSOP
+      parameters:
+        sizex: 1.3
+        sizey: 1.9
+      flags:
+      - display
+      - render
+      size: [130, 90]
+      color: [0.67, 0.67, 0.67]
+  - name: mat_floor
+    type: phongMAT
+    parameters:
+      diffr: 0.16
+      diffg: 0.16
+      diffb: 0.17
+      specr: 0.12
+      specg: 0.12
+      specb: 0.12
+      shininess: 30
+    sequences:
+      rimlight:
+      - colorr: 0.7
+        colorg: 0.7
+        colorb: 0.7
+    position: [1200, 200]
+  - name: mat_smoke
+    type: constantMAT
+    parameters:
+      colorr: =0.2 + 1.1 * sum(parent.Vis.op('fixture_data')['r'].vals) / 4
+      colorg: =0.2 + 1.1 * sum(parent.Vis.op('fixture_data')['g'].vals) / 4
+      colorb: =0.2 + 1.1 * sum(parent.Vis.op('fixture_data')['b'].vals) / 4
+      colormap: =parent.Vis.op('smoke_density')
+      blending: true
+      destblend: one
+      depthwriting: false
+      cullface: neither
+    position: [1200, -1200]
+  - name: geo_person
+    type: geometryCOMP
+    parameters:
+      tx: =parent.Echo.par.Personmove * 0.45 * math.sin(2 * math.pi * (absTime.frame % 1500) / 1500)
+      tz: 1.5
+      ry: =parent.Echo.par.Personmove * 18 * math.sin(2 * math.pi * (absTime.frame % 2100) / 2100)
+      material: =parent.Vis.op('mat_person')
+    position: [1400, 0]
+    children:
+    - name: head
+      type: sphereSOP
+      parameters:
+        radx: 0.105
+        rady: 0.12
+        radz: 0.11
+        ty: 1.63
+      position: [0, 200]
+    - name: arm_l
+      type: tubeSOP
+      parameters:
+        tx: -0.29
+        ty: 1.13
+        rz: -14
+        rad1: 0.045
+        rad2: 0.05
+        height: 0.64
+        cap: true
+      position: [0, -400]
+    - name: arm_r
+      type: tubeSOP
+      parameters:
+        tx: 0.38
+        ty: 1.32
+        rz: 58
+        rad1: 0.045
+        rad2: 0.05
+        height: 0.64
+        cap: true
+      position: [0, -600]
+    - name: leg_l
+      type: tubeSOP
+      parameters:
+        tx: -0.09
+        ty: 0.44
+        rad1: 0.07
+        rad2: 0.08
+        height: 0.88
+        cap: true
+    - name: leg_r
+      type: tubeSOP
+      parameters:
+        tx: 0.09
+        ty: 0.44
+        rad1: 0.07
+        rad2: 0.08
+        height: 0.88
+        cap: true
+      position: [0, -200]
+    - name: torso
+      type: tubeSOP
+      parameters:
+        ty: 1.18
+        rad1: 0.15
+        rad2: 0.18
+        height: 0.62
+        cap: true
+      position: [0, 400]
+    - name: merge_body
+      type: mergeSOP
+      position: [400, 0]
+      inputs:
+      - torso
+      - head
+      - leg_l
+      - leg_r
+      - arm_l
+      - arm_r
+  - name: mat_person
+    type: phongMAT
+    parameters:
+      diffr: 0.1
+      diffg: 0.1
+      diffb: 0.11
+      specr: 0.15
+      specg: 0.15
+      specb: 0.15
+      shininess: 40
+    sequences:
+      rimlight:
+      - colorr: 0.7
+        colorg: 0.7
+        colorb: 0.7
+    position: [1200, 0]
+  - name: smoke_proj
+    type: scriptCHOP
+    parameters:
+      callbacks: smoke_proj_callbacks
+    position: [0, -1400]
+  - name: vis_status
+    type: textDAT
+    parameters:
+      file: project1/echo_shadows/visualizer/vis_status.py
+      language: python
+    position: [3000, -800]
+    tags:
+    - py
+  - name: geo_housing
+    type: geometryCOMP
+    parameters:
+      instancing: true
+      instanceop: =parent.Vis.op('fixture_data')
+      instancetx: tx
+      instancety: ty
+      instancetz: tz
+      instancerx: rx
+      instancery: ry
+      material: =parent.Vis.op('mat_housing')
+    position: [1400, -200]
+    children:
+    - name: housing
+      type: boxSOP
+      parameters:
+        sizex: 0.46
+        sizey: 0.13
+        sizez: 0.15
+  - name: geo_person2
+    type: geometryCOMP
+    parameters:
+      tx: =-0.95 + parent.Echo.par.Personmove * 0.3 * math.sin(2 * math.pi * (absTime.frame % 1700) / 1700 + 1.7)
+      tz: 2.15
+      ry: =-20 + parent.Echo.par.Personmove * 25 * math.sin(2 * math.pi * (absTime.frame % 2300) / 2300 + 0.6)
+      material: =parent.Vis.op('mat_person')
+      render: =parent.Echo.par.Visitor2
+    position: [1400, -600]
+    children:
+    - name: head
+      type: sphereSOP
+      parameters:
+        radx: 0.105
+        rady: 0.12
+        radz: 0.11
+        ty: 1.63
+      position: [0, 200]
+    - name: arm_l
+      type: tubeSOP
+      parameters:
+        tx: -0.27
+        ty: 1.62
+        rz: -150
+        rad1: 0.045
+        rad2: 0.05
+        height: 0.64
+        cap: true
+      position: [0, -400]
+    - name: arm_r
+      type: tubeSOP
+      parameters:
+        tx: 0.27
+        ty: 1.62
+        rz: 150
+        rad1: 0.045
+        rad2: 0.05
+        height: 0.64
+        cap: true
+      position: [0, -600]
+    - name: leg_l
+      type: tubeSOP
+      parameters:
+        tx: -0.09
+        ty: 0.44
+        rad1: 0.07
+        rad2: 0.08
+        height: 0.88
+        cap: true
+    - name: leg_r
+      type: tubeSOP
+      parameters:
+        tx: 0.09
+        ty: 0.44
+        rad1: 0.07
+        rad2: 0.08
+        height: 0.88
+        cap: true
+      position: [0, -200]
+    - name: torso
+      type: tubeSOP
+      parameters:
+        ty: 1.18
+        rad1: 0.15
+        rad2: 0.18
+        height: 0.62
+        cap: true
+      position: [0, 400]
+    - name: merge_body
+      type: mergeSOP
+      position: [400, 0]
+      inputs:
+      - torso
+      - head
+      - leg_l
+      - leg_r
+      - arm_l
+      - arm_r
+  - name: mat_housing
+    type: phongMAT
+    parameters:
+      diffr: 0.2
+      diffg: 0.2
+      diffb: 0.2
+      specr: 0.35
+      specg: 0.35
+      specb: 0.35
+      emitr: 0.05
+      emitg: 0.05
+      emitb: 0.05
+      shininess: 60
+    sequences:
+      rimlight:
+      - colorr: 0.7
+        colorg: 0.7
+        colorb: 0.7
+    position: [1200, -200]
+  - name: panel_xform
+    type: transformTOP
+    parameters:
+      tx: =-(me.width - me.inputs[0].width) / 2 + 24
+      ty: =(me.height - me.inputs[0].height) / 2 - 24
+      tunit: pixels
+      sx: =me.inputs[0].width / me.width
+      sy: =me.inputs[0].height / me.height
+      resolutionw: 1280
+      resolutionh: 720
+    position: [3400, -400]
+    inputs:
+    - led_grid
+  - name: smoke_atten
+    type: renderselectTOP
+    parameters:
+      top: =parent.Vis.op('smoke_density')
+      bufferindex: 1
+    position: [200, -1000]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  - name: text_labels
+    type: textTOP
+    parameters:
+      text: |-
+        U1
+        U2
+        U3
+        U4
+      fontsizex: 14
+      positionx: 300
+      positiony: -44
+      linespacing: 35
+      alignx: left
+      fontcolorr: 0.6
+      fontcolorg: 0.6
+      fontcolorb: 0.6
+    position: [3400, -1200]
+  - name: text_status
+    type: textTOP
+    parameters:
+      text: =mod('vis_status').status_text() + ('' if absTime.frame else '')
+      fontsizex: 17
+      positionx: -28
+      positiony: -26
+      linespacing: 6
+      alignx: right
+      fontcolorr: 0.82
+      fontcolorg: 0.82
+      fontcolorb: 0.8
+    position: [3400, -800]
+  - name: fixture_data
+    type: scriptCHOP
+    parameters:
+      callbacks: fixture_data_callbacks
+  - name: smoke_density
+    type: glslTOP
+    parameters:
+      pixeldat: smoke_density_pixel
+      computedat: smoke_density_compute
+      numcolorbufs: 2
+      premultrgbbyalpha: false
+      outputresolution: custom
+      resolutionw: 384
+      resolutionh: 561
+      format: rgba16float
+    sequences:
+      vec:
+      - name: uP
+        valuex: =(absTime.frame % 216000) / 60.0
+        valuey: =parent.Echo.par.Smokeperiod
+        valuez: =parent.Echo.par.Smokedensity * parent.Echo.par.Smoke
+        valuew: 0.42
+      - name: uS
+        valuex: 0.85
+        valuey: 1
+        valuez: 1
+        valuew: 1
+    position: [0, -1000]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  - name: geo_prop_branch
+    type: geometryCOMP
+    parameters:
+      tx: -2.05
+      tz: 0.65
+      material: =parent.Vis.op('mat_prop')
+      render: =parent.Echo.par.Propbranch
+    position: [1400, -1000]
+    children:
+    - name: pot
+      type: tubeSOP
+      parameters:
+        ty: 0.15
+        rad1: 0.12
+        rad2: 0.16
+        height: 0.3
+        rows: 2
+        cols: 20
+        cap: true
+    - name: lift
+      type: transformSOP
+      parameters:
+        ty: 0.28
+      position: [200, 200]
+      size: [130, 90]
+      color: [0.67, 0.67, 0.67]
+      inputs:
+      - branch_gen
+    - name: branch_gen
+      type: scriptSOP
+      parameters:
+        callbacks: branch_gen_callbacks
+      position: [0, 200]
+      size: [130, 90]
+      color: [0.67, 0.67, 0.67]
+    - name: merge_branch
+      type: mergeSOP
+      position: [400, 100]
+      inputs:
+      - lift
+      - pot
+    - name: branch_gen_callbacks
+      type: textDAT
+      parameters:
+        file: project1/echo_shadows/visualizer/geo_prop_branch/branch_gen_callbacks.py
+        language: python
+      flags:
+      - viewer
+      position: [0, 80]
+      tags:
+      - py
+      dock: branch_gen
+  - name: geo_prop_lattice
+    type: geometryCOMP
+    parameters:
+      tx: 1.15
+      ty: 1.75
+      tz: 1.15
+      rx: =6 * math.sin(2 * math.pi * (absTime.frame % 900) / 900)
+      ry: =(absTime.frame % 2400) / 2400 * 360
+      material: =parent.Vis.op('mat_prop')
+      render: =parent.Echo.par.Proplattice
+    position: [1400, -800]
+    children:
+    - name: holes
+      type: deleteSOP
+      parameters:
+        usenumber: true
+        groupop: range
+        rangeend: 80
+      position: [200, 200]
+      size: [130, 90]
+      color: [0.67, 0.67, 0.67]
+      inputs:
+      - panel
+    - name: panel
+      type: gridSOP
+      parameters:
+        type: poly
+        sizex: 0.7
+        sizey: 0.7
+        rows: 10
+        cols: 10
+      position: [0, 200]
+      size: [130, 90]
+      color: [0.67, 0.67, 0.67]
+    - name: string
+      type: tubeSOP
+      parameters:
+        ty: 0.9
+        rad1: 0.004
+        rad2: 0.004
+        height: 1.1
+        rows: 2
+        cols: 6
+    - name: merge_lattice
+      type: mergeSOP
+      position: [400, 100]
+      inputs:
+      - holes
+      - string
+  - name: led_data_callbacks
+    type: textDAT
+    parameters:
+      file: project1/echo_shadows/visualizer/led_data_callbacks.py
+      language: python
+    flags:
+    - viewer
+    position: [400, -120]
+    tags:
+    - py
+    dock: led_data
+  - name: led_grid_callbacks
+    type: textDAT
+    parameters:
+      file: project1/echo_shadows/visualizer/led_grid_callbacks.py
+      language: python
+    flags:
+    - viewer
+    position: [3000, -520]
+    tags:
+    - py
+    dock: led_grid
+  - name: smoke_density_info
+    type: infoDAT
+    parameters:
+      op: smoke_density
+    flags:
+    - viewer
+    position: [75, -1120]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+    dock: smoke_density
+    dat_read_only: true
+  - name: smoke_density_pixel
+    type: textDAT
+    parameters:
+      file: project1/echo_shadows/visualizer/smoke_density_pixel.glsl
+      language: glsl
+      extension: frag
+    flags:
+    - viewer
+    position: [-75, -1120]
+    tags:
+    - glsl
+    dock: smoke_density
+  - name: smoke_proj_callbacks
+    type: textDAT
+    parameters:
+      file: project1/echo_shadows/visualizer/smoke_proj_callbacks.py
+      language: python
+    flags:
+    - viewer
+    position: [0, -1520]
+    tags:
+    - py
+    dock: smoke_proj
+  - name: fixture_data_callbacks
+    type: textDAT
+    parameters:
+      file: project1/echo_shadows/visualizer/fixture_data_callbacks.py
+      language: python
+    flags:
+    - viewer
+    position: [0, -120]
+    tags:
+    - py
+    dock: fixture_data
+  annotations:
+  - name: annotate1
+    mode: annotate
+    title: Fixture Data
+    text: DMX values to beam colours and LED instances
+    position: [-70, -190]
+    size: [670, 450]
+    color: [0.45, 0.45, 0.45]
+  - name: annotate2
+    mode: annotate
+    title: Room, Visitors, Props and Fixtures
+    text: Wall, floor, two visitors, props (lattice, branch), smoke sheet, 4 housings, 20 LED bulbs
+    position: [1130, -1270]
+    size: [500, 1970]
+    color: [0.45, 0.45, 0.45]
+  - name: annotate3
+    mode: annotate
+    title: Beams and Camera
+    text: One shadow-casting cone light per fixture
+    position: [2130, -670]
+    size: [300, 1370]
+    color: [0.45, 0.45, 0.45]
+  - name: annotate4
+    mode: annotate
+    title: Render and Overlay
+    text: Render, LED grid panel, status text, out1
+    position: [2930, -1270]
+    size: [1400, 1530]
+    color: [0.45, 0.45, 0.45]
+  - name: annotate5
+    mode: annotate
+    title: Smoke
+    text: Exhaled puff shader, its position in each light's projector, and the 4 gobos that cast the smoke shadows
+    position: [-145, -1670]
+    size: [745, 930]
+    color: [0.45, 0.45, 0.45]
+- name: audiodevin1
+  type: audiodeviceinCHOP
+  parameters:
+    active: false
+    format: stereo
+    autoexportroot: =parent()
+  position: [0, 200]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+- name: echo_engine
+  type: textDAT
+  parameters:
+    file: project1/echo_shadows/echo_engine.py
+    language: python
+  position: [1200, 600]
+  tags:
+  - py
+- name: null_engine
+  type: nullCHOP
+  parameters:
+    autoexportroot: =parent()
+  position: [1800, 200]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  inputs:
+  - engine
+- name: audiodevout1
+  type: audiodeviceoutCHOP
+  parameters:
+    active: false
+    device: BuiltInSpeakerDevice
+    autoexportroot: =parent()
+  position: [400, 0]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  inputs:
+  - audiofilein1
+- name: audiofilein1
+  type: audiofileinCHOP
+  parameters:
+    file: =parent.Echo.par.Audiofile
+    play: =parent.Echo.par.Audiosource == 'file'
+    index: =me.time.frame / root.time.rate
+    timecodeop: =tdu.Timecode()
+    autoexportroot: =parent()
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+- name: switch_audio
+  type: switchCHOP
+  parameters:
+    index: =1 if parent.Echo.par.Audiosource == 'file' else 0
+    autoexportroot: =parent()
+  position: [400, 200]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  inputs:
+  - audiodevin1
+  - audiofilein1
+- name: oscin_touchosc
+  type: oscinDAT
+  parameters:
+    port: 9100
+    callbacks: oscin_touchosc_callbacks
+    fromop: =parent()
+  position: [0, -800]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  dat_read_only: true
+- name: control_parexec
+  type: parameterexecuteDAT
+  parameters:
+    fromop: =parent()
+    op: ..
+    pars: Reset Resetengine Openpreview
+    valuechange: false
+    builtin: false
+    file: project1/echo_shadows/control_parexec.py
+    syncfile: true
+  position: [800, -800]
+  size: [130, 90]
+  color: [0.9, 0.3, 0.4]
+  tags:
+  - py
+- name: oscout_touchosc
+  type: oscoutDAT
+  parameters:
+    address: 127.0.0.1
+    port: 12000
+    fromop: =parent()
+  position: [400, -800]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  dat_read_only: true
+- name: engine_callbacks
+  type: textDAT
+  parameters:
+    file: project1/echo_shadows/engine_callbacks.py
+    language: python
+  flags:
+  - viewer
+  position: [1400, 80]
+  tags:
+  - py
+  dock: engine
+- name: dmxout1_routingtable
+  type: tableDAT
+  flags:
+  - viewer
+  - -showDocked
+  position: [3000, 80]
+  size: [130, 90]
+  color: [0.67, 0.67, 0.67]
+  dock: dmxout1
+  dat_content:
+  - - channel
+    - net
+    - subnet
+    - universe
+  dat_content_format: table
+- name: oscin_touchosc_callbacks
+  type: textDAT
+  parameters:
+    file: project1/echo_shadows/oscin_touchosc_callbacks.py
+    language: python
+  flags:
+  - viewer
+  position: [0, -920]
+  tags:
+  - py
+  dock: oscin_touchosc
+annotations:
+- name: annotate1
+  mode: annotate
+  title: Audio Input
+  text: Line In (installation) or a test file, chosen by the Audio Source parameter
+  position: [-70, -70]
+  size: [670, 530]
+  color: [0.45, 0.45, 0.45]
+- name: annotate2
+  mode: annotate
+  title: Sound Engine
+  text: 'Port of the 2024 Processing sketch: Minim-style FFT, ST1/ST2/NORMAL, 10 patterns, fades'
+  position: [1130, 10]
+  size: [870, 850]
+  color: [0.45, 0.45, 0.45]
+- name: annotate3
+  mode: annotate
+  title: DMX Output
+  text: ENTTEC DMX USB Pro, 4 units x 20ch at 1/21/41/61. Off until Dmxactive
+  position: [2530, 10]
+  size: [670, 450]
+  color: [0.45, 0.45, 0.45]
+- name: annotate4
+  mode: annotate
+  title: TouchOSC Control
+  text: In on port 9100, feedback to 12000; writes the Control parameters
+  position: [-70, -990]
+  size: [1000, 450]
+  color: [0.45, 0.45, 0.45]
+- name: annotate5
+  mode: annotate
+  title: Preview
+  text: 3D visualizer of fixtures, beams and shadows
+  position: [1330, -870]
+  size: [300, 370]
+  color: [0.45, 0.45, 0.45]
