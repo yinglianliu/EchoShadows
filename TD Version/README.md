@@ -88,4 +88,4 @@ oscin_touchosc (9100) ─► Control parameters ◄─ control_parexec ─► os
 
 ## 5. Why a custom FFT
 
-`echo_engine.py` reproduces Minim's FFT in Python (1024 points, Hamming window, 15 linear bands, including its divide-by-(j+1) averaging) instead of using TD's Audio Spectrum CHOP. That way the gains and threshold tuned in room 103B in 2024 (amp/index/step, th = 69) still apply. After changing the audio interface, adjust **Input Gain** first.
+`echo_engine.py` reproduces Minim's FFT in Python (1024 points, Hamming window, 15 linear bands, including its divide-by-(j+1) averaging) instead of using TD's Audio Spectrum CHOP. That way the gains and threshold tuned indoors in 2024 (amp/index/step, th = 69) still apply. After changing the audio interface, adjust **Input Gain** first.

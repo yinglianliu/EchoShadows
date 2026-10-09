@@ -2,7 +2,7 @@
 
 *the music already has a shape. this makes it visible.*
 
-A sound-reactive light installation by Yinglian Liu, 2024. Exhibited at Battery Park, New York City, as part of [Illumination NYC 2024](https://www.illumination.nyc/featured-artists-battery-park-2024).
+A sound-reactive light installation by Yinglian Liu, developed from November 2023 to May 2024. Exhibited in early May 2024 at Battery Park, New York City, as part of [Illumination NYC 2024](https://www.illumination.nyc/featured-artists-battery-park-2024).
 
 - **Project page:** https://yinglianliu.com/projects/echo-shadows
 - **Videos:** https://vimeo.com/yinglian
@@ -63,9 +63,11 @@ EchoShadows/
 
 ## Versions
 
-### Processing version (2024)
+### Processing version (November 2023 – May 2024)
 
-The original installation, tuned in room 103B in April 2024 and shown at Battery Park for Illumination NYC 2024.
+The original installation. Development started in November 2023, the first fixture tests ran in December 2023, it was tuned indoors in April 2024 and exhibited at Battery Park for Illumination NYC 2024 in early May 2024.
+
+The code was first published on GitHub on 2024-11-23. That snapshot is tagged [`processing-2024`](https://github.com/yinglianliu/EchoShadows/tree/processing-2024), so the original 2024 version stays easy to find even as the repository changes.
 
 - **Tools:** Processing, Minim (audio and FFT), DMX through dmx4artists, oscP5 for TouchOSC. Install the libraries with Processing's Contribution Manager.
 - **Run:** open `Processing Version/EchoShadows2024/EchoShadows2024.pde` and press Run. It listens for TouchOSC on port 9100 and sends feedback to port 12000.
