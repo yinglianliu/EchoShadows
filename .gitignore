@@ -24,3 +24,6 @@ __pycache__/
 # TouchDesigner: numbered incremental saves and the import cache (the main .toe is tracked)
 *.[0-9]*.toe
 TDImportCache/
+
+# Local test music (built from Apple Loops; not for redistribution)
+TD Version/test_audio/

@@ -13,6 +13,10 @@ TD Version/
         ├── oscin_touchosc_callbacks.py   TouchOSC -> Control parameters
         ├── control_parexec.py            Reset / Reset Engine / Open Preview Window buttons
         └── visualizer/                   scripts and shader of the 3D preview
+tools/
+├── shadow_etudes.py                      composes "Shadow Etudes", music written to steer the shadows
+└── make_synth_track.py                   a 124 BPM electronic test track with two drops
+test_audio/                               generated test music (not tracked in git)
 ```
 
 **Edit code in TD or directly in these files** (Embody keeps both in sync). Never edit `externalizations.tsv` by hand.
@@ -41,14 +45,19 @@ Open `/project1/echo_shadows`; every control lives in this component's parameter
 | | Second Visitor | A second visitor with raised arms, further back on the left |
 | | Prop: Hanging Lattice / Prop: Branch | A perforated panel turning on a string / a branch in a pot |
 | | Smoke / Smoke Puff Every / Smoke Density | The first visitor exhales a puff every few seconds; it glows in the beams and throws coloured smoke shadows on the wall |
+| Fixtures | Layout Preset / Apply Layout Preset | **Floor Row** (all four on the floor), **Pairs** (units 1 & 2 hung on stands, 3 & 4 on the floor), **Mixed** (1 & 3 hung, 2 & 4 on the floor). Choosing one fills in the values below |
+| | Unit 1–4 Position / Aim on Wall | Each fixture's position (x, height, distance from wall) and the point on the wall it is aimed at, in metres |
+| | Unit 1–4 Bulb Row | **Horizontal**: the 5 bulbs run left to right (floor fixtures). **Vertical**: bottom to top (hung fixtures); lighting the bulbs in turn makes the shadow grow taller |
 
 **Preview**: `echo_shadows/visualizer` is a Container COMP whose background is the preview image, so its node tile shows it directly; right-click it → View for a large window, or press **Open Preview Window** on the Visualizer page of `echo_shadows`.
-- 3D scene: 4 fixtures on the floor, 3.2 m from the wall and 1.2 m apart, aimed at the wall; a slowly swaying visitor 1.5 m in front of the wall; coloured shadows on the wall
+- 3D scene: 4 fixtures aimed at the wall (positions on the Fixtures page), one swaying visitor 1.5 m and a second one 0.9 m in front of the wall, coloured shadows on the wall
 - Top left: live colour of the 4×5 LEDs (U1 is the top row)
 - Top right: current state, pattern number and name, p, switch interval, d0/d1/d2
 - Smoke shadows: `smoke_density` (GLSL) draws the puff, `smoke_proj` works out where it sits in each light's view, and `gobo1–4` are the lights' projector maps that cast the smoke onto the wall, so the 4 fixtures throw 4 offset, differently coloured smoke shadows.
 
-Fixture positions and aim are at the top of `visualizer/fixture_data_callbacks.py` (`FIXTURE_X`, `FIXTURE_Z`, `AIM_Y`, …); change them to match the venue.
+Each of the 20 bulbs is its own shadow-casting light (`light_<unit>_<bulb>`), so the shadows from one fixture are offset by the bulb spacing; that is what makes them grow taller (vertical row) or spread sideways (horizontal row) as the bulbs light in turn. The scene is rendered once per fixture (`render1`–`render4`, five lights each, to stay under the GPU's limit on shadow maps per pass) and the passes are added together in `comp_light`.
+
+Fixture positions live on the **Fixtures** page; the presets themselves are defined in `LAYOUTS` at the top of `visualizer/fixture_data_callbacks.py`. Hung fixtures (higher than 0.6 m) are drawn on a stand.
 
 ---
 
@@ -89,3 +98,30 @@ oscin_touchosc (9100) ─► Control parameters ◄─ control_parexec ─► os
 ## 5. Why a custom FFT
 
 `echo_engine.py` reproduces Minim's FFT in Python (1024 points, Hamming window, 15 linear bands, including its divide-by-(j+1) averaging) instead of using TD's Audio Spectrum CHOP. That way the gains and threshold tuned indoors in 2024 (amp/index/step, th = 69) still apply. After changing the audio interface, adjust **Input Gain** first.
+
+---
+
+## 6. Test music written for the engine
+
+The scripts in `tools/` synthesize music from plain waveforms (sines, saws, filtered noise) with numpy. Run them from this folder with TouchDesigner's bundled Python, then pick the file as **Test Audio File**:
+
+```
+/Applications/TouchDesigner.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3 tools/shadow_etudes.py test_audio/shadow_etudes.wav
+```
+
+**Shadow Etudes** (80 s) is composed backwards from the engine: the score is a pair of target curves for d0 and d1, played by a warm chord timbre that only sounds in band 0 (0–1.47 kHz) and a bell timbre that only sounds in band 1 (1.47–2.94 kHz). Each timbre is calibrated so the needed loudness can be computed from the target. Measured with the Default booster:
+
+| Section | Intention | Result |
+|---|---|---|
+| Breath (0–24 s) | Slow low swells: 1 → 5 → 1 bulbs, shadows grow and shrink | NORMAL, p rises and falls 1 → 5 → 1 |
+| Heartbeat (24–40 s) | An accelerating lub-dub | NORMAL, p pulses between 1 and 3 |
+| Fireflies (40–52 s) | One dim bulb, random bell sparkles tint it green | NORMAL, d1 up to ~66 |
+| Storm (52–64 s) | Low and bright accents alternating at 140 BPM | ST1 about a third of the time, fast switching |
+| Twins (64–72 s) | Both bands saturated | ST2 about 90% of the time (p reaches 6) |
+| Exhale (72–80 s) | One long breath out | Back to one bulb |
+
+What the engine responds to:
+- In NORMAL, the number of lit bulbs follows the **level** of band 0, not the beat: p = 1 + d0 × 0.04. A slow low crescendo lights the bulbs one by one, which on a vertical fixture makes the shadow grow taller.
+- Keeping band 1 below d1 = 10 holds the engine in NORMAL however loud the lows get; band 1 above 10 with d0 above 69 gives ST1.
+- ST2 needs bands 0 and 1 both saturated at once, which ordinary music rarely does: a deliberate climax.
+- Each band is the average of 35 FFT bins, so energy spread across the band counts far more than a single loud low note. Mixed and mastered music fills the bands; a bare kick drum barely moves them.

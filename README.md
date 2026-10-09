@@ -45,6 +45,7 @@ EchoShadows/
 │   ├── EchoShadows2024/         Processing sketch (v19)
 │   └── EchoShadows2024.tosc     TouchOSC control layout (used by both versions)
 └── TD Version/                  TouchDesigner rebuild with a 3D preview of the installation
+    └── tools/                   scripts that compose test music written to steer the shadows
 ```
 
 ---

@@ -21,6 +21,9 @@ type_defaults:
     - viewer
     size: [130, 90]
     color: [0.67, 0.67, 0.67]
+  compositeTOP:
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
   connectivityPOP:
     parameters:
       surftype: lines
@@ -46,7 +49,6 @@ type_defaults:
     color: [0.67, 0.67, 0.67]
   lightCOMP:
     parameters:
-      aperture: 41.4214
       coneangle: 72
       conedelta: 22
       coneroll: 1.4
@@ -56,6 +58,8 @@ type_defaults:
       projmapextendu: hold
       projmapextendv: hold
       shadowcasters: =' '.join(o.path for o in parent.Vis.ops('geo_person*', 'geo_prop_*') if o.par.render.eval())
+      shadowresolution1: 512
+      shadowresolution2: 512
       shadowtype: soft2d
     size: [160, 130]
     color: [0.67, 0.67, 0.67]
@@ -110,6 +114,11 @@ type_defaults:
       sizev: 0.5
     flags:
     - viewer
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  renderTOP:
+    parameters:
+      format: rgba16float
     size: [130, 90]
     color: [0.67, 0.67, 0.67]
   scriptCHOP:
@@ -265,6 +274,7 @@ custom_pars:
     label: Test Audio File
     default: /Applications/TouchDesigner.app/Contents/Resources/tfs/Samples/Audio/JeremyCaulfield_www.dumb-unit.com.mp3
     help: Music file used when Audio Source is Test File.
+    value: test_audio/shadow_etudes.wav
   - name: Inputgain
     style: Float
     label: Input Gain
@@ -283,6 +293,7 @@ custom_pars:
     label: Legacy Demo Override
     default: true
     help: 'On = exactly like the 2024 sketch: in sound mode unit1 red, unit2 green, unit3 blue and 7 unit4 channels are always forced to 0 (side effect of the demo blocks). Off = every pattern shows all its colours.'
+    value: false
   - name: Resetengine
     style: Pulse
     label: Reset Engine
@@ -346,6 +357,131 @@ custom_pars:
     clampMin: true
     normMax: 4.0
     help: 'Visualizer only: thickness of the smoke, for the visible puff and its shadow.'
+  Fixtures:
+  - name: Layoutpreset
+    style: Menu
+    label: Layout Preset
+    default: floorrow
+    menuNames:
+    - floorrow
+    - pairs
+    - mixed
+    menuLabels:
+    - Floor Row
+    - 'Pairs: 1 & 2 Hung, 3 & 4 Floor'
+    - 'Mixed: 1 & 3 Hung, 2 & 4 Floor'
+    help: 'Visualizer only: choosing a preset writes its positions into the fixture parameters below; adjust them afterwards as needed. Hung units are drawn on a stand.'
+    value: mixed
+  - name: Applylayout
+    style: Pulse
+    label: Apply Layout Preset
+    help: 'Visualizer only: write the selected preset into the fixture parameters again (undoes manual tweaks).'
+  - name: Fix1pos
+    style: XYZW
+    label: Unit 1 Position (x, height, from wall)
+    size: 3
+    startSection: true
+    default: [-1.8, 0.35, 3.2]
+    help: 'Visualizer only: unit 1 position in metres. x = left/right as seen by the audience, y = height of the fixture above the floor, z = distance from the wall.'
+    values: [-1.8, 1.65, 3]
+  - name: Fix1aim
+    style: XYZW
+    label: Unit 1 Aim on Wall (x, height)
+    size: 2
+    default: [-0.63, 1.5]
+    help: 'Visualizer only: the point on the wall unit 1 is aimed at, in metres (x, height).'
+    values: [-0.6, 1.6]
+  - name: Fix1row
+    style: Menu
+    label: Unit 1 Bulb Row
+    default: horizontal
+    menuNames:
+    - horizontal
+    - vertical
+    menuLabels:
+    - Horizontal (left to right)
+    - Vertical (bottom to top)
+    help: 'Visualizer only: direction of unit 1''s 5-bulb row. Vertical (hung fixtures) makes shadows grow taller as the bulbs light in turn; horizontal (floor fixtures) spreads them sideways.'
+    value: vertical
+  - name: Fix2pos
+    style: XYZW
+    label: Unit 2 Position (x, height, from wall)
+    size: 3
+    startSection: true
+    default: [-0.6, 0.35, 3.2]
+    help: 'Visualizer only: unit 2 position in metres. x = left/right as seen by the audience, y = height of the fixture above the floor, z = distance from the wall.'
+    values: [-0.6, 0.25, 3.2]
+  - name: Fix2aim
+    style: XYZW
+    label: Unit 2 Aim on Wall (x, height)
+    size: 2
+    default: [-0.21, 1.5]
+    help: 'Visualizer only: the point on the wall unit 2 is aimed at, in metres (x, height).'
+    values: [-0.2, 1.6]
+  - name: Fix2row
+    style: Menu
+    label: Unit 2 Bulb Row
+    default: horizontal
+    menuNames:
+    - horizontal
+    - vertical
+    menuLabels:
+    - Horizontal (left to right)
+    - Vertical (bottom to top)
+    help: 'Visualizer only: direction of unit 2''s 5-bulb row. Vertical (hung fixtures) makes shadows grow taller as the bulbs light in turn; horizontal (floor fixtures) spreads them sideways.'
+  - name: Fix3pos
+    style: XYZW
+    label: Unit 3 Position (x, height, from wall)
+    size: 3
+    startSection: true
+    default: [0.6, 0.35, 3.2]
+    help: 'Visualizer only: unit 3 position in metres. x = left/right as seen by the audience, y = height of the fixture above the floor, z = distance from the wall.'
+    values: [0.6, 1.4, 3]
+  - name: Fix3aim
+    style: XYZW
+    label: Unit 3 Aim on Wall (x, height)
+    size: 2
+    default: [0.21, 1.5]
+    help: 'Visualizer only: the point on the wall unit 3 is aimed at, in metres (x, height).'
+    values: [0.2, 1.5]
+  - name: Fix3row
+    style: Menu
+    label: Unit 3 Bulb Row
+    default: horizontal
+    menuNames:
+    - horizontal
+    - vertical
+    menuLabels:
+    - Horizontal (left to right)
+    - Vertical (bottom to top)
+    help: 'Visualizer only: direction of unit 3''s 5-bulb row. Vertical (hung fixtures) makes shadows grow taller as the bulbs light in turn; horizontal (floor fixtures) spreads them sideways.'
+    value: vertical
+  - name: Fix4pos
+    style: XYZW
+    label: Unit 4 Position (x, height, from wall)
+    size: 3
+    startSection: true
+    default: [1.8, 0.35, 3.2]
+    help: 'Visualizer only: unit 4 position in metres. x = left/right as seen by the audience, y = height of the fixture above the floor, z = distance from the wall.'
+    values: [1.8, 0.5, 3.2]
+  - name: Fix4aim
+    style: XYZW
+    label: Unit 4 Aim on Wall (x, height)
+    size: 2
+    default: [0.63, 1.5]
+    help: 'Visualizer only: the point on the wall unit 4 is aimed at, in metres (x, height).'
+    values: [0.6, 1.6]
+  - name: Fix4row
+    style: Menu
+    label: Unit 4 Bulb Row
+    default: horizontal
+    menuNames:
+    - horizontal
+    - vertical
+    menuLabels:
+    - Horizontal (left to right)
+    - Vertical (bottom to top)
+    help: 'Visualizer only: direction of unit 4''s 5-bulb row. Vertical (hung fixtures) makes shadows grow taller as the bulbs light in turn; horizontal (floor fixtures) spreads them sideways.'
 parameters:
   parentshortcut: Echo
 color: [0.3, 0.5, 0.9]
@@ -409,7 +545,7 @@ operators:
       ry: 8.97263
       fov: 52
       aperture: 41.4214
-    position: [2200, -600]
+    position: [2200, -800]
     size: [160, 130]
     color: [0.67, 0.67, 0.67]
     children:
@@ -428,7 +564,7 @@ operators:
       label: =me.name
     flags:
     - display
-    position: [4200, 0]
+    position: [5400, 0]
     size: [130, 90]
     color: [0.67, 0.67, 0.67]
     inputs:
@@ -501,17 +637,193 @@ operators:
     position: [400, -1600]
     inputs:
     - smoke_atten
-  - name: light1
+  - name: mat_led
+    type: constantMAT
+    position: [1200, -400]
+  - name: render1
+    type: renderTOP
+    parameters:
+      geometry: geo_wall geo_floor geo_person geo_person2 geo_prop_lattice geo_prop_branch geo_stands geo_housing geo_leds geo_smoke
+      lights: light_1_* ambient1
+    position: [4200, 0]
+  - name: render2
+    type: renderTOP
+    parameters:
+      geometry: geo_wall geo_floor geo_person geo_person2 geo_prop_lattice geo_prop_branch geo_stands geo_housing
+      lights: light_2_*
+    position: [4200, -200]
+  - name: render3
+    type: renderTOP
+    parameters:
+      geometry: geo_wall geo_floor geo_person geo_person2 geo_prop_lattice geo_prop_branch geo_stands geo_housing
+      lights: light_3_*
+    position: [4200, -400]
+  - name: render4
+    type: renderTOP
+    parameters:
+      geometry: geo_wall geo_floor geo_person geo_person2 geo_prop_lattice geo_prop_branch geo_stands geo_housing
+      lights: light_4_*
+    position: [4200, -600]
+  - name: ambient1
+    type: ambientlightCOMP
+    parameters:
+      dimmer: 0.06
+      aperture: 41.4214
+    position: [2200, -600]
+    size: [160, 130]
+    color: [0.67, 0.67, 0.67]
+    children:
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.2
+        rady: 0.2
+        radz: 0.2
+      flags:
+      - display
+      - viewer
+  - name: geo_leds
+    type: geometryCOMP
+    parameters:
+      instancing: true
+      instanceop: =parent.Vis.op('led_data')
+      instancetx: tx
+      instancety: ty
+      instancetz: tz
+      instancerx: rx
+      instancery: ry
+      instancer: r
+      instanceg: g
+      instanceb: b
+      material: =parent.Vis.op('mat_led')
+    position: [1400, -400]
+    children:
+    - name: bulb
+      type: sphereSOP
+      parameters:
+        radx: 0.03
+        rady: 0.03
+        radz: 0.03
+        rows: 10
+        cols: 16
+      flags:
+      - display
+      - render
+  - name: geo_wall
+    type: geometryCOMP
+    parameters:
+      material: =parent.Vis.op('mat_wall')
+    position: [1400, 400]
+    children:
+    - name: wall
+      type: boxSOP
+      parameters:
+        sizex: 7
+        sizey: 3.6
+        sizez: 0.1
+        ty: 1.8
+        tz: -0.05
+  - name: led_data
+    type: scriptCHOP
+    parameters:
+      callbacks: led_data_callbacks
+    position: [400, 0]
+    inputs:
+    - fixture_data
+  - name: led_grid
+    type: scriptTOP
+    parameters:
+      callbacks: led_grid_callbacks
+    position: [4200, -800]
+    size: [130, 90]
+    color: [0.67, 0.67, 0.67]
+  - name: mat_prop
+    type: phongMAT
+    parameters:
+      diffr: 0.55
+      diffg: 0.52
+      diffb: 0.48
+      specr: 0.1
+      specg: 0.1
+      specb: 0.1
+      shininess: 20
+      cullface: neither
+    sequences:
+      rimlight:
+      - colorr: 0.7
+        colorg: 0.7
+        colorb: 0.7
+    position: [1200, -800]
+  - name: mat_wall
+    type: phongMAT
+    parameters:
+      diffr: 0.82
+      diffg: 0.8
+      diffb: 0.77
+      specr: 0.03
+      specg: 0.03
+      specb: 0.03
+    sequences:
+      rimlight:
+      - colorr: 0.7
+        colorg: 0.7
+        colorb: 0.7
+    position: [1200, 400]
+  - name: comp_over
+    type: compositeTOP
+    parameters:
+      operand: over
+    position: [5000, 0]
+    inputs:
+    - text_status
+    - text_labels
+    - panel_xform
+    - comp_light
+  - name: geo_floor
+    type: geometryCOMP
+    parameters:
+      material: =parent.Vis.op('mat_floor')
+    position: [1400, 200]
+    children:
+    - name: floor
+      type: boxSOP
+      parameters:
+        sizex: 7
+        sizey: 0.04
+        sizez: 5.5
+        ty: -0.02
+        tz: 2.4
+  - name: geo_smoke
+    type: geometryCOMP
+    parameters:
+      tx: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[0]
+      ty: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[1]
+      tz: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[2]
+      material: =parent.Vis.op('mat_smoke')
+      render: =parent.Echo.par.Smoke
+    position: [1400, -1200]
+    children:
+    - name: sheet
+      type: rectangleSOP
+      parameters:
+        sizex: 1.3
+        sizey: 1.9
+      flags:
+      - display
+      - render
+      size: [130, 90]
+      color: [0.67, 0.67, 0.67]
+  - name: light_1_1
     type: lightCOMP
     parameters:
-      tx: =parent.Vis.op('fixture_data')['tx'][0]
-      ty: =parent.Vis.op('fixture_data')['ty'][0]
-      tz: =parent.Vis.op('fixture_data')['tz'][0]
+      tx: =parent.Vis.op('led_data')['lx'][0]
+      ty: =parent.Vis.op('led_data')['ly'][0]
+      tz: =parent.Vis.op('led_data')['lz'][0]
       rx: =parent.Vis.op('fixture_data')['rx'][0]
       ry: =parent.Vis.op('fixture_data')['ry'][0]
-      cr: =parent.Vis.op('fixture_data')['r'][0]
-      cg: =parent.Vis.op('fixture_data')['g'][0]
-      cb: =parent.Vis.op('fixture_data')['b'][0]
+      cr: =parent.Vis.op('led_data')['lr'][0]
+      cg: =parent.Vis.op('led_data')['lg'][0]
+      cb: =parent.Vis.op('led_data')['lb'][0]
       projmap: =parent.Vis.op('gobo1')
     position: [2200, 400]
     children:
@@ -743,18 +1055,18 @@ operators:
       flags:
       - viewer
       position: [520, 780]
-  - name: light2
+  - name: light_1_2
     type: lightCOMP
     parameters:
-      tx: =parent.Vis.op('fixture_data')['tx'][1]
-      ty: =parent.Vis.op('fixture_data')['ty'][1]
-      tz: =parent.Vis.op('fixture_data')['tz'][1]
-      rx: =parent.Vis.op('fixture_data')['rx'][1]
-      ry: =parent.Vis.op('fixture_data')['ry'][1]
-      cr: =parent.Vis.op('fixture_data')['r'][1]
-      cg: =parent.Vis.op('fixture_data')['g'][1]
-      cb: =parent.Vis.op('fixture_data')['b'][1]
-      projmap: =parent.Vis.op('gobo2')
+      tx: =parent.Vis.op('led_data')['lx'][1]
+      ty: =parent.Vis.op('led_data')['ly'][1]
+      tz: =parent.Vis.op('led_data')['lz'][1]
+      rx: =parent.Vis.op('fixture_data')['rx'][0]
+      ry: =parent.Vis.op('fixture_data')['ry'][0]
+      cr: =parent.Vis.op('led_data')['lr'][1]
+      cg: =parent.Vis.op('led_data')['lg'][1]
+      cb: =parent.Vis.op('led_data')['lb'][1]
+      projmap: =parent.Vis.op('gobo1')
     position: [2200, 200]
     children:
     - name: copy1
@@ -985,18 +1297,18 @@ operators:
       flags:
       - viewer
       position: [520, 780]
-  - name: light3
+  - name: light_1_3
     type: lightCOMP
     parameters:
-      tx: =parent.Vis.op('fixture_data')['tx'][2]
-      ty: =parent.Vis.op('fixture_data')['ty'][2]
-      tz: =parent.Vis.op('fixture_data')['tz'][2]
-      rx: =parent.Vis.op('fixture_data')['rx'][2]
-      ry: =parent.Vis.op('fixture_data')['ry'][2]
-      cr: =parent.Vis.op('fixture_data')['r'][2]
-      cg: =parent.Vis.op('fixture_data')['g'][2]
-      cb: =parent.Vis.op('fixture_data')['b'][2]
-      projmap: =parent.Vis.op('gobo3')
+      tx: =parent.Vis.op('led_data')['lx'][2]
+      ty: =parent.Vis.op('led_data')['ly'][2]
+      tz: =parent.Vis.op('led_data')['lz'][2]
+      rx: =parent.Vis.op('fixture_data')['rx'][0]
+      ry: =parent.Vis.op('fixture_data')['ry'][0]
+      cr: =parent.Vis.op('led_data')['lr'][2]
+      cg: =parent.Vis.op('led_data')['lg'][2]
+      cb: =parent.Vis.op('led_data')['lb'][2]
+      projmap: =parent.Vis.op('gobo1')
     position: [2200, 0]
     children:
     - name: copy1
@@ -1227,18 +1539,18 @@ operators:
       flags:
       - viewer
       position: [520, 780]
-  - name: light4
+  - name: light_1_4
     type: lightCOMP
     parameters:
-      tx: =parent.Vis.op('fixture_data')['tx'][3]
-      ty: =parent.Vis.op('fixture_data')['ty'][3]
-      tz: =parent.Vis.op('fixture_data')['tz'][3]
-      rx: =parent.Vis.op('fixture_data')['rx'][3]
-      ry: =parent.Vis.op('fixture_data')['ry'][3]
-      cr: =parent.Vis.op('fixture_data')['r'][3]
-      cg: =parent.Vis.op('fixture_data')['g'][3]
-      cb: =parent.Vis.op('fixture_data')['b'][3]
-      projmap: =parent.Vis.op('gobo4')
+      tx: =parent.Vis.op('led_data')['lx'][3]
+      ty: =parent.Vis.op('led_data')['ly'][3]
+      tz: =parent.Vis.op('led_data')['lz'][3]
+      rx: =parent.Vis.op('fixture_data')['rx'][0]
+      ry: =parent.Vis.op('fixture_data')['ry'][0]
+      cr: =parent.Vis.op('led_data')['lr'][3]
+      cg: =parent.Vis.op('led_data')['lg'][3]
+      cb: =parent.Vis.op('led_data')['lb'][3]
+      projmap: =parent.Vis.op('gobo1')
     position: [2200, -200]
     children:
     - name: copy1
@@ -1469,169 +1781,3878 @@ operators:
       flags:
       - viewer
       position: [520, 780]
-  - name: mat_led
-    type: constantMAT
-    position: [1200, -400]
-  - name: render1
-    type: renderTOP
+  - name: light_1_5
+    type: lightCOMP
     parameters:
-      geometry: geo_wall geo_floor geo_person geo_person2 geo_prop_lattice geo_prop_branch geo_housing geo_leds geo_smoke
-      lights: light* ambient1
-      antialias: aa8
-    position: [3000, 0]
-    size: [130, 90]
-    color: [0.67, 0.67, 0.67]
-  - name: ambient1
-    type: ambientlightCOMP
-    parameters:
-      dimmer: 0.06
-      aperture: 41.4214
+      tx: =parent.Vis.op('led_data')['lx'][4]
+      ty: =parent.Vis.op('led_data')['ly'][4]
+      tz: =parent.Vis.op('led_data')['lz'][4]
+      rx: =parent.Vis.op('fixture_data')['rx'][0]
+      ry: =parent.Vis.op('fixture_data')['ry'][0]
+      cr: =parent.Vis.op('led_data')['lr'][4]
+      cg: =parent.Vis.op('led_data')['lg'][4]
+      cb: =parent.Vis.op('led_data')['lb'][4]
+      projmap: =parent.Vis.op('gobo1')
     position: [2200, -400]
-    size: [160, 130]
-    color: [0.67, 0.67, 0.67]
     children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
     - name: sphere1
       type: spherePOP
       parameters:
-        radx: 0.2
-        rady: 0.2
-        radz: 0.2
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
       flags:
-      - display
       - viewer
-  - name: geo_leds
-    type: geometryCOMP
-    parameters:
-      instancing: true
-      instanceop: =parent.Vis.op('led_data')
-      instancetx: tx
-      instancety: ty
-      instancetz: tz
-      instancerx: rx
-      instancery: ry
-      instancer: r
-      instanceg: g
-      instanceb: b
-      material: =parent.Vis.op('mat_led')
-    position: [1400, -400]
-    children:
-    - name: bulb
-      type: sphereSOP
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
       parameters:
-        radx: 0.03
-        rady: 0.03
-        radz: 0.03
-        rows: 10
-        cols: 16
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
       flags:
       - display
       - render
-  - name: geo_wall
-    type: geometryCOMP
-    parameters:
-      material: =parent.Vis.op('mat_wall')
-    position: [1400, 400]
-    children:
-    - name: wall
-      type: boxSOP
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
       parameters:
-        sizex: 7
-        sizey: 3.6
-        sizez: 0.1
-        ty: 1.8
-        tz: -0.05
-  - name: led_data
-    type: scriptCHOP
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_2_1
+    type: lightCOMP
     parameters:
-      callbacks: led_data_callbacks
-    position: [400, 0]
-    inputs:
-    - fixture_data
-  - name: led_grid
-    type: scriptTOP
+      tx: =parent.Vis.op('led_data')['lx'][5]
+      ty: =parent.Vis.op('led_data')['ly'][5]
+      tz: =parent.Vis.op('led_data')['lz'][5]
+      rx: =parent.Vis.op('fixture_data')['rx'][1]
+      ry: =parent.Vis.op('fixture_data')['ry'][1]
+      cr: =parent.Vis.op('led_data')['lr'][5]
+      cg: =parent.Vis.op('led_data')['lg'][5]
+      cb: =parent.Vis.op('led_data')['lb'][5]
+      projmap: =parent.Vis.op('gobo2')
+    position: [2600, 400]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_2_2
+    type: lightCOMP
     parameters:
-      callbacks: led_grid_callbacks
+      tx: =parent.Vis.op('led_data')['lx'][6]
+      ty: =parent.Vis.op('led_data')['ly'][6]
+      tz: =parent.Vis.op('led_data')['lz'][6]
+      rx: =parent.Vis.op('fixture_data')['rx'][1]
+      ry: =parent.Vis.op('fixture_data')['ry'][1]
+      cr: =parent.Vis.op('led_data')['lr'][6]
+      cg: =parent.Vis.op('led_data')['lg'][6]
+      cb: =parent.Vis.op('led_data')['lb'][6]
+      projmap: =parent.Vis.op('gobo2')
+    position: [2600, 200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_2_3
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][7]
+      ty: =parent.Vis.op('led_data')['ly'][7]
+      tz: =parent.Vis.op('led_data')['lz'][7]
+      rx: =parent.Vis.op('fixture_data')['rx'][1]
+      ry: =parent.Vis.op('fixture_data')['ry'][1]
+      cr: =parent.Vis.op('led_data')['lr'][7]
+      cg: =parent.Vis.op('led_data')['lg'][7]
+      cb: =parent.Vis.op('led_data')['lb'][7]
+      projmap: =parent.Vis.op('gobo2')
+    position: [2600, 0]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_2_4
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][8]
+      ty: =parent.Vis.op('led_data')['ly'][8]
+      tz: =parent.Vis.op('led_data')['lz'][8]
+      rx: =parent.Vis.op('fixture_data')['rx'][1]
+      ry: =parent.Vis.op('fixture_data')['ry'][1]
+      cr: =parent.Vis.op('led_data')['lr'][8]
+      cg: =parent.Vis.op('led_data')['lg'][8]
+      cb: =parent.Vis.op('led_data')['lb'][8]
+      projmap: =parent.Vis.op('gobo2')
+    position: [2600, -200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_2_5
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][9]
+      ty: =parent.Vis.op('led_data')['ly'][9]
+      tz: =parent.Vis.op('led_data')['lz'][9]
+      rx: =parent.Vis.op('fixture_data')['rx'][1]
+      ry: =parent.Vis.op('fixture_data')['ry'][1]
+      cr: =parent.Vis.op('led_data')['lr'][9]
+      cg: =parent.Vis.op('led_data')['lg'][9]
+      cb: =parent.Vis.op('led_data')['lb'][9]
+      projmap: =parent.Vis.op('gobo2')
+    position: [2600, -400]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_3_1
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][10]
+      ty: =parent.Vis.op('led_data')['ly'][10]
+      tz: =parent.Vis.op('led_data')['lz'][10]
+      rx: =parent.Vis.op('fixture_data')['rx'][2]
+      ry: =parent.Vis.op('fixture_data')['ry'][2]
+      cr: =parent.Vis.op('led_data')['lr'][10]
+      cg: =parent.Vis.op('led_data')['lg'][10]
+      cb: =parent.Vis.op('led_data')['lb'][10]
+      projmap: =parent.Vis.op('gobo3')
+    position: [3000, 400]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_3_2
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][11]
+      ty: =parent.Vis.op('led_data')['ly'][11]
+      tz: =parent.Vis.op('led_data')['lz'][11]
+      rx: =parent.Vis.op('fixture_data')['rx'][2]
+      ry: =parent.Vis.op('fixture_data')['ry'][2]
+      cr: =parent.Vis.op('led_data')['lr'][11]
+      cg: =parent.Vis.op('led_data')['lg'][11]
+      cb: =parent.Vis.op('led_data')['lb'][11]
+      projmap: =parent.Vis.op('gobo3')
+    position: [3000, 200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_3_3
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][12]
+      ty: =parent.Vis.op('led_data')['ly'][12]
+      tz: =parent.Vis.op('led_data')['lz'][12]
+      rx: =parent.Vis.op('fixture_data')['rx'][2]
+      ry: =parent.Vis.op('fixture_data')['ry'][2]
+      cr: =parent.Vis.op('led_data')['lr'][12]
+      cg: =parent.Vis.op('led_data')['lg'][12]
+      cb: =parent.Vis.op('led_data')['lb'][12]
+      projmap: =parent.Vis.op('gobo3')
+    position: [3000, 0]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_3_4
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][13]
+      ty: =parent.Vis.op('led_data')['ly'][13]
+      tz: =parent.Vis.op('led_data')['lz'][13]
+      rx: =parent.Vis.op('fixture_data')['rx'][2]
+      ry: =parent.Vis.op('fixture_data')['ry'][2]
+      cr: =parent.Vis.op('led_data')['lr'][13]
+      cg: =parent.Vis.op('led_data')['lg'][13]
+      cb: =parent.Vis.op('led_data')['lb'][13]
+      projmap: =parent.Vis.op('gobo3')
+    position: [3000, -200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_3_5
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][14]
+      ty: =parent.Vis.op('led_data')['ly'][14]
+      tz: =parent.Vis.op('led_data')['lz'][14]
+      rx: =parent.Vis.op('fixture_data')['rx'][2]
+      ry: =parent.Vis.op('fixture_data')['ry'][2]
+      cr: =parent.Vis.op('led_data')['lr'][14]
+      cg: =parent.Vis.op('led_data')['lg'][14]
+      cb: =parent.Vis.op('led_data')['lb'][14]
+      projmap: =parent.Vis.op('gobo3')
     position: [3000, -400]
-    size: [130, 90]
-    color: [0.67, 0.67, 0.67]
-  - name: mat_prop
-    type: phongMAT
-    parameters:
-      diffr: 0.55
-      diffg: 0.52
-      diffb: 0.48
-      specr: 0.1
-      specg: 0.1
-      specb: 0.1
-      shininess: 20
-      cullface: neither
-    sequences:
-      rimlight:
-      - colorr: 0.7
-        colorg: 0.7
-        colorb: 0.7
-    position: [1200, -800]
-  - name: mat_wall
-    type: phongMAT
-    parameters:
-      diffr: 0.82
-      diffg: 0.8
-      diffb: 0.77
-      specr: 0.03
-      specg: 0.03
-      specb: 0.03
-    sequences:
-      rimlight:
-      - colorr: 0.7
-        colorg: 0.7
-        colorb: 0.7
-    position: [1200, 400]
-  - name: comp_over
-    type: compositeTOP
-    parameters:
-      operand: over
-    position: [3800, 0]
-    size: [130, 90]
-    color: [0.67, 0.67, 0.67]
-    inputs:
-    - text_status
-    - text_labels
-    - panel_xform
-    - render1
-  - name: geo_floor
-    type: geometryCOMP
-    parameters:
-      material: =parent.Vis.op('mat_floor')
-    position: [1400, 200]
     children:
-    - name: floor
-      type: boxSOP
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
       parameters:
-        sizex: 7
-        sizey: 0.04
-        sizez: 5.5
-        ty: -0.02
-        tz: 2.4
-  - name: geo_smoke
-    type: geometryCOMP
-    parameters:
-      tx: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[0]
-      ty: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[1]
-      tz: =parent.Vis.op("smoke_proj_callbacks").module.sheet_centre()[2]
-      material: =parent.Vis.op('mat_smoke')
-      render: =parent.Echo.par.Smoke
-    position: [1400, -1200]
-    children:
-    - name: sheet
-      type: rectangleSOP
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
       parameters:
-        sizex: 1.3
-        sizey: 1.9
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
       flags:
       - display
       - render
-      size: [130, 90]
-      color: [0.67, 0.67, 0.67]
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_4_1
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][15]
+      ty: =parent.Vis.op('led_data')['ly'][15]
+      tz: =parent.Vis.op('led_data')['lz'][15]
+      rx: =parent.Vis.op('fixture_data')['rx'][3]
+      ry: =parent.Vis.op('fixture_data')['ry'][3]
+      cr: =parent.Vis.op('led_data')['lr'][15]
+      cg: =parent.Vis.op('led_data')['lg'][15]
+      cb: =parent.Vis.op('led_data')['lb'][15]
+      projmap: =parent.Vis.op('gobo4')
+    position: [3400, 400]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_4_2
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][16]
+      ty: =parent.Vis.op('led_data')['ly'][16]
+      tz: =parent.Vis.op('led_data')['lz'][16]
+      rx: =parent.Vis.op('fixture_data')['rx'][3]
+      ry: =parent.Vis.op('fixture_data')['ry'][3]
+      cr: =parent.Vis.op('led_data')['lr'][16]
+      cg: =parent.Vis.op('led_data')['lg'][16]
+      cb: =parent.Vis.op('led_data')['lb'][16]
+      projmap: =parent.Vis.op('gobo4')
+    position: [3400, 200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_4_3
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][17]
+      ty: =parent.Vis.op('led_data')['ly'][17]
+      tz: =parent.Vis.op('led_data')['lz'][17]
+      rx: =parent.Vis.op('fixture_data')['rx'][3]
+      ry: =parent.Vis.op('fixture_data')['ry'][3]
+      cr: =parent.Vis.op('led_data')['lr'][17]
+      cg: =parent.Vis.op('led_data')['lg'][17]
+      cb: =parent.Vis.op('led_data')['lb'][17]
+      projmap: =parent.Vis.op('gobo4')
+    position: [3400, 0]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_4_4
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][18]
+      ty: =parent.Vis.op('led_data')['ly'][18]
+      tz: =parent.Vis.op('led_data')['lz'][18]
+      rx: =parent.Vis.op('fixture_data')['rx'][3]
+      ry: =parent.Vis.op('fixture_data')['ry'][3]
+      cr: =parent.Vis.op('led_data')['lr'][18]
+      cg: =parent.Vis.op('led_data')['lg'][18]
+      cb: =parent.Vis.op('led_data')['lb'][18]
+      projmap: =parent.Vis.op('gobo4')
+    position: [3400, -200]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
+  - name: light_4_5
+    type: lightCOMP
+    parameters:
+      tx: =parent.Vis.op('led_data')['lx'][19]
+      ty: =parent.Vis.op('led_data')['ly'][19]
+      tz: =parent.Vis.op('led_data')['lz'][19]
+      rx: =parent.Vis.op('fixture_data')['rx'][3]
+      ry: =parent.Vis.op('fixture_data')['ry'][3]
+      cr: =parent.Vis.op('led_data')['lr'][19]
+      cg: =parent.Vis.op('led_data')['lg'][19]
+      cb: =parent.Vis.op('led_data')['lb'][19]
+      projmap: =parent.Vis.op('gobo4')
+    position: [3400, -400]
+    children:
+    - name: copy1
+      type: copyPOP
+      position: [520, 670]
+      inputs:
+      - tube_attenuated
+    - name: merge1
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [250, 500]
+      inputs:
+      - rectangle1
+      - tube_cone1
+      - tube_cone2
+      - primitive1
+      - line_atten
+      - circle_attenStart
+      - circle_attenEnd
+    - name: merge2
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [950, 230]
+      inputs:
+      - connectivity1
+      - circle1
+    - name: merge3
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+      position: [620, 290]
+      inputs:
+      - pointgen1
+      - transform1
+    - name: circle1
+      type: circlePOP
+      parameters:
+        scale: 0.2
+      position: [780, 170]
+    - name: sphere1
+      type: spherePOP
+      parameters:
+        radx: 0.05
+        rady: 0.05
+        radz: 0.05
+        freq: 3
+      flags:
+      - viewer
+      position: [520, 890]
+    - name: pointgen1
+      type: pointgeneratorPOP
+      position: [270, 290]
+    - name: line_atten
+      type: linePOP
+      sequences:
+        pt:
+        - posz: =-parent().par.attenuationstart
+        - posz: =-parent().par.attenuationend
+      custom_pars:
+        Points:
+          $t: points
+      position: [0, 230]
+    - name: primitive1
+      type: primitivePOP
+      parameters:
+        method: pattern
+      sequences:
+        prim:
+        - type: lines
+          pattern: 0 1 0 2 0 3 0 4
+        pt:
+        - {}
+        - posx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posx: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =0-op('tube_cone1').par.height
+        - posy: =-mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+        - posy: =mod.math.sin(-mod.math.radians(parent().par.coneangle/2)) - mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+          posz: =-op('tube_cone1').par.height
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [0, 390]
+    - name: rectangle1
+      type: rectanglePOP
+      position: [0, 730]
+    - name: transform1
+      type: transformPOP
+      position: [450, 370]
+      inputs:
+      - pointgen1
+    - name: tube_cone1
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        rady: 0.01
+        height: =mod.math.cos(mod.math.radians(parent().par.coneangle/2))
+        tz: =-me.par.height*0.5
+      position: [0, 620]
+    - name: tube_cone2
+      type: tubePOP
+      parameters:
+        radx: =mod.math.sin(mod.math.radians(parent().par.coneangle/2)) + mod.math.sin(mod.math.radians(parent().par.conedelta/2))
+        rady: =mod.math.sin(mod.math.radians(parent().par.coneangle/2))
+        height: 0
+        tz: =-op('tube_cone1').par.height
+      position: [0, 500]
+    - name: connectivity1
+      type: connectivityPOP
+      position: [780, 290]
+      inputs:
+      - merge3
+    - name: circle_attenEnd
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationend
+        bypass: =not parent().par.attenuated
+    - name: primitive_cross
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: -0.2
+        - posx: 0.2
+        - posy: -0.2
+        - posy: 0.2
+        - posz: -0.2
+        - posz: 0.2
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - display
+      - render
+      - viewer
+      position: [520, 1000]
+    - name: tube_attenuated
+      type: tubePOP
+      parameters:
+        surftype: rows
+        radx: =parent().par.attenuationend
+        rady: =parent().par.attenuationstart
+        height: 0
+        bypass: =not parent().par.attenuated
+      position: [368, 673]
+    - name: merge_pointLight
+      type: mergePOP
+      sequences:
+        input:
+        - {}
+        - {}
+        - {}
+        - {}
+      position: [760, 820]
+      inputs:
+      - sphere1
+      - primitive_quadrants
+      - copy1
+    - name: switch_lightType
+      type: switchPOP
+      position: [1140, 500]
+      inputs:
+      - merge_pointLight
+      - merge1
+      - merge2
+    - name: circle_attenStart
+      type: circlePOP
+      parameters:
+        radx: 0.1
+        rady: 0.1
+        tz: =-parent().par.attenuationstart
+        bypass: =not parent().par.attenuated
+      position: [0, 120]
+    - name: primitive_quadrants
+      type: primitivePOP
+      parameters:
+        method: set
+        setprimtype: lines
+      sequences:
+        pt:
+        - posx: 0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: 0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: -0.07
+          posy: -0.07
+          posz: 0.07
+        - posx: -0.07
+          posy: 0.07
+          posz: -0.07
+        - posx: 0.07
+          posy: -0.07
+          posz: 0.07
+      custom_pars:
+        Points:
+          $t: points
+      flags:
+      - viewer
+      position: [520, 780]
   - name: mat_floor
     type: phongMAT
     parameters:
@@ -1660,6 +5681,17 @@ operators:
       depthwriting: false
       cullface: neither
     position: [1200, -1200]
+  - name: comp_light
+    type: compositeTOP
+    parameters:
+      operand: add
+      format: rgba16float
+    position: [4600, 0]
+    inputs:
+    - render1
+    - render2
+    - render3
+    - render4
   - name: geo_person
     type: geometryCOMP
     parameters:
@@ -1737,6 +5769,44 @@ operators:
       - leg_r
       - arm_l
       - arm_r
+  - name: geo_stands
+    type: geometryCOMP
+    parameters:
+      instancing: true
+      instanceop: =parent.Vis.op('fixture_data')
+      instanceactive: standon
+      instancetx: tx
+      instancetz: tz
+      instancesy: standh
+      material: =parent.Vis.op('mat_housing')
+    position: [1400, -1400]
+    children:
+    - name: base
+      type: tubeSOP
+      parameters:
+        ty: 0.01
+        rad1: 0.2
+        rad2: 0.2
+        height: 0.02
+        rows: 2
+        cols: 20
+        cap: true
+    - name: pole
+      type: tubeSOP
+      parameters:
+        ty: 0.5
+        rad1: 0.018
+        rad2: 0.018
+        rows: 2
+        cols: 10
+        cap: true
+      position: [0, 200]
+    - name: merge_stand
+      type: mergeSOP
+      position: [200, 100]
+      inputs:
+      - pole
+      - base
   - name: mat_person
     type: phongMAT
     parameters:
@@ -1763,7 +5833,7 @@ operators:
     parameters:
       file: project1/echo_shadows/visualizer/vis_status.py
       language: python
-    position: [3000, -800]
+    position: [4200, -1200]
     tags:
     - py
   - name: geo_housing
@@ -1776,20 +5846,20 @@ operators:
       instancetz: tz
       instancerx: rx
       instancery: ry
+      instancesx: sx
+      instancesy: sy
       material: =parent.Vis.op('mat_housing')
     position: [1400, -200]
     children:
     - name: housing
       type: boxSOP
       parameters:
-        sizex: 0.46
-        sizey: 0.13
         sizez: 0.15
   - name: geo_person2
     type: geometryCOMP
     parameters:
-      tx: =-0.95 + parent.Echo.par.Personmove * 0.3 * math.sin(2 * math.pi * (absTime.frame % 1700) / 1700 + 1.7)
-      tz: 2.15
+      tx: =-1.3 + parent.Echo.par.Personmove * 0.25 * math.sin(2 * math.pi * (absTime.frame % 1700) / 1700 + 1.7)
+      tz: 0.9
       ry: =-20 + parent.Echo.par.Personmove * 25 * math.sin(2 * math.pi * (absTime.frame % 2300) / 2300 + 0.6)
       material: =parent.Vis.op('mat_person')
       render: =parent.Echo.par.Visitor2
@@ -1872,9 +5942,6 @@ operators:
       specr: 0.35
       specg: 0.35
       specb: 0.35
-      emitr: 0.05
-      emitg: 0.05
-      emitb: 0.05
       shininess: 60
     sequences:
       rimlight:
@@ -1892,7 +5959,7 @@ operators:
       sy: =me.inputs[0].height / me.height
       resolutionw: 1280
       resolutionh: 720
-    position: [3400, -400]
+    position: [4600, -800]
     inputs:
     - led_grid
   - name: smoke_atten
@@ -1919,7 +5986,7 @@ operators:
       fontcolorr: 0.6
       fontcolorg: 0.6
       fontcolorb: 0.6
-    position: [3400, -1200]
+    position: [4600, -1600]
   - name: text_status
     type: textTOP
     parameters:
@@ -1932,7 +5999,7 @@ operators:
       fontcolorr: 0.82
       fontcolorg: 0.82
       fontcolorb: 0.8
-    position: [3400, -800]
+    position: [4600, -1200]
   - name: fixture_data
     type: scriptCHOP
     parameters:
@@ -2082,7 +6149,7 @@ operators:
       language: python
     flags:
     - viewer
-    position: [3000, -520]
+    position: [4200, -920]
     tags:
     - py
     dock: led_grid
@@ -2142,23 +6209,23 @@ operators:
   - name: annotate2
     mode: annotate
     title: Room, Visitors, Props and Fixtures
-    text: Wall, floor, two visitors, props (lattice, branch), smoke sheet, 4 housings, 20 LED bulbs
-    position: [1130, -1270]
-    size: [500, 1970]
+    text: Wall, floor, two visitors, props (lattice, branch), smoke sheet, fixture housings and stands, 20 bulbs
+    position: [1130, -1470]
+    size: [500, 2170]
     color: [0.45, 0.45, 0.45]
   - name: annotate3
     mode: annotate
     title: Beams and Camera
-    text: One shadow-casting cone light per fixture
-    position: [2130, -670]
-    size: [300, 1370]
+    text: 'One shadow-casting cone light per bulb: light_<unit>_<bulb>, one column per fixture. Ambient light and camera below.'
+    position: [2130, -870]
+    size: [1500, 1570]
     color: [0.45, 0.45, 0.45]
   - name: annotate4
     mode: annotate
     title: Render and Overlay
-    text: Render, LED grid panel, status text, out1
-    position: [2930, -1270]
-    size: [1400, 1530]
+    text: One render pass per fixture (5 lights each, under the GPU's shadow-map limit), added in comp_light. LED grid panel, status text, out1.
+    position: [4130, -1670]
+    size: [1470, 1930]
     color: [0.45, 0.45, 0.45]
   - name: annotate5
     mode: annotate
@@ -2196,8 +6263,7 @@ operators:
 - name: audiodevout1
   type: audiodeviceoutCHOP
   parameters:
-    active: false
-    device: BuiltInSpeakerDevice
+    device: 9C-A9-C5-0F-FD-E3:output
     autoexportroot: =parent()
   position: [400, 0]
   size: [130, 90]
@@ -2240,8 +6306,7 @@ operators:
   parameters:
     fromop: =parent()
     op: ..
-    pars: Reset Resetengine Openpreview
-    valuechange: false
+    pars: Reset Resetengine Openpreview Applylayout Layoutpreset
     builtin: false
     file: project1/echo_shadows/control_parexec.py
     syncfile: true
